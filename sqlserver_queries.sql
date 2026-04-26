@@ -31,3 +31,28 @@ INNER JOIN Location_Performance lp
 WHERE lp.NoShow_Rate > (SELECT AVG(NoShow_Rate) FROM Location_Performance)
 ORDER BY lp.NoShow_Rate DESC;
 GO
+    
+---------------------------------------------------------------------------------
+    
+-- Query 2: Providers above average total production
+-- Uses CTE to build total production per provider
+-- Window function ranks providers highest to lowest
+-- WHERE filters only above average producers
+
+WITH Provider_Production AS (
+    SELECT
+    provider_id,
+    SUM(treatment_amount) AS Total_Production
+    FROM patient_treatments
+    GROUP BY provider_id
+)
+SELECT
+dr.provider_name,
+dr.specialty,
+Total_Production,
+RANK() OVER (ORDER BY Total_Production DESC) AS Provider_Rank
+FROM providers dr
+INNER JOIN Provider_Production 
+    ON dr.provider_id = Provider_Production.provider_id
+WHERE Total_Production > (SELECT AVG(Total_Production) FROM Provider_Production);
+GO
