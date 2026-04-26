@@ -17,8 +17,10 @@ and analytical queries covering failure rate analysis,
 location risk classification, and compliance status flagging.
 
 Files:
-- compliance_testing_database.sql — full schema, 5 tables
-- compliance_queries.sql — 3 analytical queries
+Files:
+- dso_portfolio_schema.sql — full 12 table schema
+- dso_portfolio_queries.sql — analytical queries
+- sqlserver_queries.sql — SQL Server versions of analytical queries
 
 ### 2. Treatment Analytics — Decline Reasons
 Three table database connecting providers, patient
