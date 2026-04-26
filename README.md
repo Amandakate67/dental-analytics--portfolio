@@ -20,7 +20,6 @@ Files:
 Files:
 - dso_portfolio_schema.sql — full 12 table schema
 - dso_portfolio_queries.sql — analytical queries
-- sqlserver_queries.sql — SQL Server versions of analytical queries
 
 ### 2. Treatment Analytics — Decline Reasons
 Three table database connecting providers, patient
@@ -54,8 +53,10 @@ Key queries built:
 - Decline reason analysis with recommended actions
 
 Files:
+Files:
 - dso_portfolio_schema.sql — full 12 table schema
 - dso_portfolio_queries.sql — analytical queries
+- sqlserver_queries.sql — SQL Server versions of analytical queries
 
 ## Skills
 - SQL (SQLite + SQL Server Express, CTEs, subqueries, 
