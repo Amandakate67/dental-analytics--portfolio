@@ -56,7 +56,7 @@ Files:
 - dso_portfolio_queries.sql — analytical queries
 
 ## Skills
-- - SQL (SQLite + SQL Server Express, CTEs, subqueries, 
+- SQL (SQLite + SQL Server Express, CTEs, subqueries, 
   JOINs, CASE WHEN, GROUP BY, HAVING, aggregate functions,
   window functions)
 - Excel (pivot tables, dashboards, compliance tracking)
