@@ -109,3 +109,25 @@ CASE WHEN Total_Production > (SELECT AVG(Total_Production) FROM Total_Pract)
 FROM providers dr
 JOIN Total_Pract tp ON dr.provider_id = tp.provider_id;
 GO
+
+-----------------------------------------------------------------------------------------
+
+-- Query 5: Insurance carrier collection rate analysis
+-- Shows total billed, insurance paid, patient portion
+-- and collection rate as a percentage per carrier
+-- Collection rate = (insurance paid + patient portion) / total billed
+-- SQL Server syntax with CAST and DECIMAL
+
+SELECT
+ic.insurance_carrier,
+SUM(ic.billed_amount) AS Total_Amount_Billed,
+SUM(ic.insurance_paid) AS Paid_By_Insurance,
+SUM(ic.patient_portion) AS Total_Pt_Portion,
+CAST(ROUND(
+    (SUM(ic.insurance_paid + ic.patient_portion))
+    * 100.0 / SUM(ic.billed_amount)
+, 2) AS DECIMAL(10,2)) AS Collection_Rate
+FROM insurance_claims ic
+GROUP BY ic.insurance_carrier
+ORDER BY Collection_Rate DESC;
+GO
