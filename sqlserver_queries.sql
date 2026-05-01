@@ -82,3 +82,30 @@ JOIN No_ShowRate nsr ON dr.provider_id = nsr.provider_id
 WHERE No_Show_Rate > (SELECT AVG(No_Show_Rate) FROM No_ShowRate)
 ORDER BY No_Show_Rate DESC;
 GO
+
+-----------------------------------------------------------------------------------
+-- Query 4: Provider performance scorecard
+-- CTE builds total production per provider
+-- RANK window function ranks highest to lowest
+-- CASE WHEN labels above or below practice average
+-- SQL Server syntax with CAST and DECIMAL
+
+WITH Total_Pract AS (
+    SELECT
+    pt.provider_id,
+    SUM(treatment_amount) AS Total_Production
+    FROM patient_treatments pt
+    GROUP BY pt.provider_id
+)
+SELECT
+dr.provider_name,
+dr.specialty,
+Total_Production,
+RANK() OVER (ORDER BY Total_Production DESC) AS Rank_Production,
+CASE WHEN Total_Production > (SELECT AVG(Total_Production) FROM Total_Pract)
+    THEN 'Above Average'
+    ELSE 'Below Average'
+    END AS Performance
+FROM providers dr
+JOIN Total_Pract tp ON dr.provider_id = tp.provider_id;
+GO
