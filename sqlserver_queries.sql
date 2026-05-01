@@ -56,3 +56,29 @@ INNER JOIN Provider_Production
     ON dr.provider_id = Provider_Production.provider_id
 WHERE Total_Production > (SELECT AVG(Total_Production) FROM Provider_Production);
 GO
+
+-----------------------------------------------------------------------------------
+    
+-- Query 3: Providers with no-show rate above overall average
+-- Uses CTE with CASE WHEN to calculate no-show rate per provider
+-- Filters providers above the group benchmark
+-- SQL Server syntax with CAST and DECIMAL
+
+WITH No_ShowRate AS (
+    SELECT
+    appt.provider_id,
+    CAST(ROUND(SUM(CASE WHEN no_show = 'Yes' 
+        THEN 1 ELSE 0 END) *100.0/COUNT(*), 2) 
+        AS DECIMAL(10,2)) AS No_Show_Rate
+    FROM appointments appt
+    GROUP BY appt.provider_id
+)
+SELECT
+dr.provider_name,
+dr.specialty,
+No_Show_Rate
+FROM providers dr
+JOIN No_ShowRate nsr ON dr.provider_id = nsr.provider_id
+WHERE No_Show_Rate > (SELECT AVG(No_Show_Rate) FROM No_ShowRate)
+ORDER BY No_Show_Rate DESC;
+GO
