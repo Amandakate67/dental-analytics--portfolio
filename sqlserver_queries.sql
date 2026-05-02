@@ -148,3 +148,37 @@ AND p.payer = 'Insurance'
 GROUP BY ic.insurance_carrier
 ORDER BY Total_Outstanding DESC;
 GO
+
+------------------------------------------------------------------------------------------
+
+-- Query 7: Location no-show rate ranking
+-- CTE builds total appointments, total no-shows, and no-show rate per location
+-- RANK window function orders locations by no-show rate highest to lowest
+-- WHERE filters active locations only
+-- SQL Server syntax with CAST and DECIMAL
+
+WITH Rate_Table AS (
+    SELECT
+    apt.location_id,
+    COUNT(*) AS Total_Appointments,
+    SUM(CASE WHEN apt.no_show = 'Yes' 
+        THEN 1 ELSE 0 END) AS Total_NoShows,
+    CAST(ROUND(SUM(CASE WHEN apt.no_show = 'Yes'
+        THEN 1 ELSE 0 END) *100.0/COUNT(*), 2)
+        AS DECIMAL(10,2)) AS No_Show_Rate
+    FROM appointments apt
+    GROUP BY apt.location_id
+)
+SELECT
+loc.location_name,
+rt.Total_Appointments,
+rt.Total_NoShows,
+rt.No_Show_Rate,
+RANK() OVER (ORDER BY rt.No_Show_Rate DESC) AS Location_Rank
+FROM locations loc
+JOIN Rate_Table rt ON loc.location_id = rt.location_id
+WHERE loc.active = 'Yes'
+GROUP BY loc.location_name, rt.Total_Appointments,
+rt.Total_NoShows, rt.No_Show_Rate
+ORDER BY Location_Rank;
+GO
