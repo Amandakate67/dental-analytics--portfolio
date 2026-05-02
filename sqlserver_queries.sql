@@ -131,3 +131,20 @@ FROM insurance_claims ic
 GROUP BY ic.insurance_carrier
 ORDER BY Collection_Rate DESC;
 GO
+
+-----------------------------------------------------------------------------------------
+-- Query 6: Outstanding balance by insurance carrier
+-- Joins payments to insurance_claims to get carrier names
+-- Filters to insurance payer only with outstanding balance > 0
+-- Shows what each carrier still owes the practice
+
+SELECT
+ic.insurance_carrier,
+SUM(p.outstanding_balance) AS Total_Outstanding
+FROM payments p
+JOIN insurance_claims ic ON p.patient_id = ic.patient_id
+WHERE p.outstanding_balance > 0
+AND p.payer = 'Insurance'
+GROUP BY ic.insurance_carrier
+ORDER BY Total_Outstanding DESC;
+GO
